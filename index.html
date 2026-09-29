@@ -36,15 +36,12 @@ body{margin:0;background:var(--bg);color:var(--ink);font:400 1.0625rem/1.6 var(-
 .track{flex:1;height:4px;background:var(--line);border-radius:2px;overflow:hidden}
 .fill{height:100%;width:100%;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .3s ease}
 
-header{padding-block:48px 28px}
+header{padding-block:48px 40px}
 .eyebrow{font:500 .75rem/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:0 0 14px}
 h1{font:800 clamp(2rem,6vw,3rem)/1.05 var(--display);font-stretch:125%;letter-spacing:-.01em;margin:0 0 18px;text-wrap:balance}
 .lead{margin:0 0 12px;max-width:62ch}
 .note{margin:0;color:var(--muted);font-size:.95rem;max-width:62ch}
 
-.who{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:20px;background:var(--paper);border:1px solid var(--line);border-radius:6px;margin-block:8px 40px}
-.who label{display:block;font:700 .8125rem/1.3 var(--display);font-stretch:100%;margin-bottom:6px}
-.who small{display:block;font:400 .8125rem/1.4 var(--body);color:var(--muted);margin-top:6px}
 input[type=text],textarea{width:100%;font:400 1rem/1.5 var(--body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:10px 12px}
 input[type=text]:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent}
 textarea{min-height:104px;resize:vertical}
@@ -74,8 +71,7 @@ button[disabled]{opacity:.55;cursor:progress}
 .thanks h1{margin-bottom:14px}
 
 @media (max-width:560px){
-  .who{grid-template-columns:1fr;padding:16px}
-  .q{grid-template-columns:1fr}
+    .q{grid-template-columns:1fr}
   .q-num{line-height:1.4;margin-bottom:2px}
   button{justify-self:stretch}
 }
@@ -85,7 +81,7 @@ button[disabled]{opacity:.55;cursor:progress}
 <body>
 
 <div class="bar" aria-hidden="true"><div class="bar-in">
-  <span class="bar-lbl" id="bar-lbl">0 / 25</span>
+  <span class="bar-lbl" id="bar-lbl">0 / 24</span>
   <div class="track"><div class="fill" id="fill"></div></div>
 </div></div>
 
@@ -94,29 +90,17 @@ button[disabled]{opacity:.55;cursor:progress}
     <p class="eyebrow">G2G, interni upitnik</p>
     <h1>Upitnik za tim</h1>
     <p class="lead">Ovo su pitanja o tome kako radimo svaki dan: klijenti, vozači, smene, zarada i organizacija. Odgovori kratko i konkretno, najbolje kroz primer iz prakse.</p>
-    <p class="note">Ime nije obavezno. Nijedno pitanje nije obavezno, preskoči ono na šta nemaš odgovor. Tekst se čuva u ovom pregledaču dok ne pošalješ, pa možeš da nastaviš kasnije.</p>
+    <p class="note">Upitnik je anoniman: ne pitamo ime, ulogu ni smenu, i ne vidi se ko je šta poslao. Nijedno pitanje nije obavezno, preskoči ono na šta nemaš odgovor. Tekst se čuva u ovom pregledaču dok ne pošalješ, pa možeš da nastaviš kasnije.</p>
   </header>
 
   <form id="forma" novalidate>
-    <div class="who">
-      <div>
-        <label for="ime">Ime</label>
-        <input type="text" id="ime" name="ime" autocomplete="name" maxlength="80">
-        <small>Ostavi prazno ako želiš anonimno.</small>
-      </div>
-      <div>
-        <label for="smena">Uloga ili smena</label>
-        <input type="text" id="smena" name="smena" maxlength="80" placeholder="npr. dispečer, noćna smena">
-        <small>Nije obavezno.</small>
-      </div>
-    </div>
 
     <div id="sekcije"></div>
 
     <div class="hp" aria-hidden="true"><label for="website">Website</label><input type="text" id="website" name="website" tabindex="-1" autocomplete="off"></div>
 
     <div class="send">
-      <p id="send-sum">Popunjeno 0 od 25 pitanja.</p>
+      <p id="send-sum">Popunjeno 0 od 24 pitanja.</p>
       <button type="submit" id="posalji">Pošalji odgovore</button>
       <div class="msg" id="msg" role="status" aria-live="polite"></div>
     </div>
@@ -131,13 +115,13 @@ button[disabled]{opacity:.55;cursor:progress}
 
 <script>
 const WEBHOOK = "https://n8n.adjustmentdigital.com/webhook/g2g-upitnik-tim";
-const KLJUC = "g2g-upitnik-tim-v1";
+const KLJUC = "g2g-upitnik-tim-v2";
 
 const SEKCIJE = [
   { naslov: "Rad za klijente i vozače", pitanja: [
     "Kada se desi da klijent ili vozač čeka odgovor duže nego što bi trebalo? Šta je tada razlog?",
     "Šta najčešće dovede do toga da kamion ostane bez ture ili stoji prazan?",
-    "Kad uzmeš turu koja nije najbolja za kamion (manje milja, lošija cena, propušten parcijal), zbog čega se to desi?",
+    "Kad uzmeš turu koja nije najbolja za kamion (manje milja, lošija cena), zbog čega se to desi?",
     "Šta ti otežava da izveštaji i papirologija budu tačni i završeni na vreme?",
     "Opiši situaciju sa vozačem koja je mogla da prođe bolje. Gde je zapelo u komunikaciji?",
     "Šta sve klijenti traže od tebe, a nije deo našeg posla ili nije dogovoreno?",
@@ -152,7 +136,6 @@ const SEKCIJE = [
   { naslov: "Ljudi", pitanja: [
     "Šta bi, po tebi, zaradu ovde učinilo pravednijom i jasnijom?",
     "Gde vidiš sebe u ovoj firmi za godinu-dve? Šta ti danas nedostaje da do toga stigneš?",
-    "Šta ti otežava da odeš na odmor bez brige i da ga isplaniraš unapred?",
     "Seti se kad ti je poslednji put trebala pomoć kolege. Kako je to prošlo i šta bi moglo bolje?",
     "Seti se dogovora koji nije ispoštovan, bilo s čije strane, uključujući vlasnike. Šta se desilo posle?",
     "Kako saznaš da li radiš dobro? Kakvu povratnu informaciju bi voleo da dobijaš?",
@@ -222,7 +205,7 @@ function osvezi() {
 // nacrt u pregledaču
 function sacuvaj() {
   try {
-    const d = { ime: $("ime").value, smena: $("smena").value };
+    const d = {};
     polja().forEach(t => d[t.id] = t.value);
     localStorage.setItem(KLJUC, JSON.stringify(d));
   } catch (e) {}
@@ -230,7 +213,6 @@ function sacuvaj() {
 try {
   const d = JSON.parse(localStorage.getItem(KLJUC) || "null");
   if (d) {
-    $("ime").value = d.ime || ""; $("smena").value = d.smena || "";
     polja().forEach(t => { if (d[t.id]) t.value = d[t.id]; });
   }
 } catch (e) {}
@@ -257,8 +239,6 @@ $("forma").addEventListener("submit", async e => {
     odgovori.push({ sekcija: s.naslov, pitanje: p, odgovor: $("q" + br).value.trim() });
   }));
   const telo = {
-    ime: $("ime").value.trim(),
-    smena: $("smena").value.trim(),
     website: $("website").value,
     test: new URLSearchParams(location.search).has("test"),
     odgovori
