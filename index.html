@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="sr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>G2G upitnik za tim</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100,500;100,700;125,800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: jedna kolona kao dispečerski obrazac, lepljiva traka napretka gore, sekcije kao "tovarni listovi" */
+:root{
+  --bg:#f3f2ee; --paper:#fbfaf7; --ink:#1b1f1d; --muted:#5d645f; --line:#d9d8d0;
+  --accent:#1d5e45; --accent-soft:#e1ece6; --warn:#a4462b;
+  --display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#141715; --paper:#1b1f1d; --ink:#ecebe5; --muted:#a3aba5; --line:#313733;
+  --accent:#6fc19b; --accent-soft:#223a2f; --warn:#e08a6c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141715; --paper:#1b1f1d; --ink:#ecebe5; --muted:#a3aba5; --line:#313733;
+  --accent:#6fc19b; --accent-soft:#223a2f; --warn:#e08a6c; color-scheme:dark}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 1.0625rem/1.6 var(--body)}
+.wrap{max-width:720px;margin:0 auto;padding-inline:16px;padding-block:0 96px}
+
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+.bar-in{max-width:720px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:14px}
+.bar-lbl{font:500 .75rem/1 var(--mono);letter-spacing:.06em;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+.track{flex:1;height:4px;background:var(--line);border-radius:2px;overflow:hidden}
+.fill{height:100%;width:100%;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .3s ease}
+
+header{padding-block:48px 28px}
+.eyebrow{font:500 .75rem/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:0 0 14px}
+h1{font:800 clamp(2rem,6vw,3rem)/1.05 var(--display);font-stretch:125%;letter-spacing:-.01em;margin:0 0 18px;text-wrap:balance}
+.lead{margin:0 0 12px;max-width:62ch}
+.note{margin:0;color:var(--muted);font-size:.95rem;max-width:62ch}
+
+.who{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:20px;background:var(--paper);border:1px solid var(--line);border-radius:6px;margin-block:8px 40px}
+.who label{display:block;font:700 .8125rem/1.3 var(--display);font-stretch:100%;margin-bottom:6px}
+.who small{display:block;font:400 .8125rem/1.4 var(--body);color:var(--muted);margin-top:6px}
+input[type=text],textarea{width:100%;font:400 1rem/1.5 var(--body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:10px 12px}
+input[type=text]:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent}
+textarea{min-height:104px;resize:vertical}
+
+section{margin-block:0 48px}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-top:2px solid var(--ink);padding-top:12px;margin-bottom:20px}
+h2{font:700 1.375rem/1.2 var(--display);font-stretch:112%;margin:0;text-wrap:balance}
+.sec-count{font:500 .75rem/1 var(--mono);color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+.sec-count.done{color:var(--accent)}
+
+.q{display:grid;grid-template-columns:2.25rem minmax(0,1fr);gap:0 10px;margin-bottom:26px}
+.q-num{font:500 .8125rem/1.9 var(--mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.q.ok .q-num{color:var(--accent)}
+.q label{display:block;font-weight:600;margin-bottom:8px;text-wrap:pretty}
+
+.send{border-top:2px solid var(--ink);padding-top:20px;display:grid;gap:14px}
+.send p{margin:0;color:var(--muted);font-size:.95rem}
+button{appearance:none;border:0;border-radius:4px;background:var(--accent);color:var(--paper);font:700 1rem/1 var(--display);font-stretch:112%;padding:16px 22px;cursor:pointer;justify-self:start}
+button:hover{filter:brightness(1.08)}
+button:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+button[disabled]{opacity:.55;cursor:progress}
+.msg{font-size:.95rem;min-height:1.4em}
+.msg.err{color:var(--warn)}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+
+.thanks{padding-block:96px;text-align:left}
+.thanks h1{margin-bottom:14px}
+
+@media (max-width:560px){
+  .who{grid-template-columns:1fr;padding:16px}
+  .q{grid-template-columns:1fr}
+  .q-num{line-height:1.4;margin-bottom:2px}
+  button{justify-self:stretch}
+}
+@media (prefers-reduced-motion:reduce){.fill{transition:none}}
+</style>
+</head>
+<body>
+
+<div class="bar" aria-hidden="true"><div class="bar-in">
+  <span class="bar-lbl" id="bar-lbl">0 / 25</span>
+  <div class="track"><div class="fill" id="fill"></div></div>
+</div></div>
+
+<main class="wrap" id="main">
+  <header>
+    <p class="eyebrow">G2G, interni upitnik</p>
+    <h1>Upitnik za tim</h1>
+    <p class="lead">Ovo su pitanja o tome kako radimo svaki dan: klijenti, vozači, smene, zarada i organizacija. Odgovori kratko i konkretno, najbolje kroz primer iz prakse.</p>
+    <p class="note">Ime nije obavezno. Nijedno pitanje nije obavezno, preskoči ono na šta nemaš odgovor. Tekst se čuva u ovom pregledaču dok ne pošalješ, pa možeš da nastaviš kasnije.</p>
+  </header>
+
+  <form id="forma" novalidate>
+    <div class="who">
+      <div>
+        <label for="ime">Ime</label>
+        <input type="text" id="ime" name="ime" autocomplete="name" maxlength="80">
+        <small>Ostavi prazno ako želiš anonimno.</small>
+      </div>
+      <div>
+        <label for="smena">Uloga ili smena</label>
+        <input type="text" id="smena" name="smena" maxlength="80" placeholder="npr. dispečer, noćna smena">
+        <small>Nije obavezno.</small>
+      </div>
+    </div>
+
+    <div id="sekcije"></div>
+
+    <div class="hp" aria-hidden="true"><label for="website">Website</label><input type="text" id="website" name="website" tabindex="-1" autocomplete="off"></div>
+
+    <div class="send">
+      <p id="send-sum">Popunjeno 0 od 25 pitanja.</p>
+      <button type="submit" id="posalji">Pošalji odgovore</button>
+      <div class="msg" id="msg" role="status" aria-live="polite"></div>
+    </div>
+  </form>
+</main>
+
+<main class="wrap thanks" id="hvala" hidden>
+  <p class="eyebrow">Poslato</p>
+  <h1>Hvala ti.</h1>
+  <p class="lead">Odgovori su stigli. Možeš da zatvoriš ovu stranu.</p>
+</main>
+
+<script>
+const WEBHOOK = "https://n8n.adjustmentdigital.com/webhook/g2g-upitnik-tim";
+const KLJUC = "g2g-upitnik-tim-v1";
+
+const SEKCIJE = [
+  { naslov: "Rad za klijente i vozače", pitanja: [
+    "Kada se desi da klijent ili vozač čeka odgovor duže nego što bi trebalo? Šta je tada razlog?",
+    "Šta najčešće dovede do toga da kamion ostane bez ture ili stoji prazan?",
+    "Kad uzmeš turu koja nije najbolja za kamion (manje milja, lošija cena, propušten parcijal), zbog čega se to desi?",
+    "Šta ti otežava da izveštaji i papirologija budu tačni i završeni na vreme?",
+    "Opiši situaciju sa vozačem koja je mogla da prođe bolje. Gde je zapelo u komunikaciji?",
+    "Šta sve klijenti traže od tebe, a nije deo našeg posla ili nije dogovoreno?",
+    "Kad setup ili uvođenje novog kamiona ili firme kasni, gde najčešće zapne?"
+  ]},
+  { naslov: "Da li se posao isplati", pitanja: [
+    "Sa kojim klijentima ili vozačima gubiš najviše vremena i živaca, a posao opet ne ide? Šta tačno pravi problem? Bez imena, ako želiš.",
+    "Kako tebi izgleda kad posla odjednom ima mnogo manje ili previše? Šta bi, po tebi, pomoglo da bude ujednačenije?",
+    "Koju uslugu ili pomoć klijenti i vozači traže od nas, a mi je danas ne nudimo?",
+    "Kako bi voleo da tvoja zarada bude povezana sa tvojim rezultatima i rezultatima tima? Šta ti danas u tome nije jasno?"
+  ]},
+  { naslov: "Ljudi", pitanja: [
+    "Šta bi, po tebi, zaradu ovde učinilo pravednijom i jasnijom?",
+    "Gde vidiš sebe u ovoj firmi za godinu-dve? Šta ti danas nedostaje da do toga stigneš?",
+    "Šta ti otežava da odeš na odmor bez brige i da ga isplaniraš unapred?",
+    "Seti se kad ti je poslednji put trebala pomoć kolege. Kako je to prošlo i šta bi moglo bolje?",
+    "Seti se dogovora koji nije ispoštovan, bilo s čije strane, uključujući vlasnike. Šta se desilo posle?",
+    "Kako saznaš da li radiš dobro? Kakvu povratnu informaciju bi voleo da dobijaš?",
+    "Kada imaš osećaj da posao nije fer raspoređen (box i veliki kamioni, lakši i teži klijenti)? Opiši kako to izgleda."
+  ]},
+  { naslov: "Kako smo organizovani", pitanja: [
+    "Opiši situaciju iz poslednjih mesec dana kad nije bilo jasno ko šta treba da uradi. Šta se desilo posle?",
+    "Šta najčešće ispadne ili se izgubi kad se menja smena?",
+    "U kojim situacijama nisi siguran da li smeš sam da odlučiš ili moraš da pitaš vlasnike? Daj primer.",
+    "Koja pravila rada ili ponašanja nam nedostaju, ili postoje, ali ih se niko ne drži?",
+    "Kad je gužva, kako odlučuješ šta prvo rešavaš? Šta bi ti to olakšalo?",
+    "Šta te usporava u alatima i softveru koje koristimo, ili šta radiš ručno, a moglo bi automatski?",
+    "Koje brojke o svom radu bi voleo da vidiš (po kamionu, po klijentu, svoje), a danas ih ne vidiš?",
+    "Sa čim sve ideš kod vlasnika, a misliš da bi moglo da se reši i bez njih?"
+  ]}
+];
+
+const UKUPNO = SEKCIJE.reduce((n, s) => n + s.pitanja.length, 0);
+const $ = id => document.getElementById(id);
+
+// iscrtaj pitanja
+(function () {
+  let br = 0;
+  const kont = $("sekcije");
+  SEKCIJE.forEach((s, si) => {
+    const sec = document.createElement("section");
+    const glava = document.createElement("div");
+    glava.className = "sec-head";
+    const h = document.createElement("h2"); h.textContent = s.naslov;
+    const c = document.createElement("span"); c.className = "sec-count"; c.id = "cnt-" + si;
+    glava.append(h, c); sec.append(glava);
+    s.pitanja.forEach(p => {
+      br++;
+      const id = "q" + br;
+      const q = document.createElement("div"); q.className = "q"; q.dataset.sek = si;
+      const n = document.createElement("span"); n.className = "q-num"; n.textContent = String(br).padStart(2, "0");
+      const box = document.createElement("div"); box.style.minWidth = "0";
+      const l = document.createElement("label"); l.htmlFor = id; l.textContent = p;
+      const t = document.createElement("textarea"); t.id = id; t.name = id; t.maxLength = 5000;
+      box.append(l, t); q.append(n, box); sec.append(q);
+    });
+    kont.append(sec);
+  });
+})();
+
+const polja = () => [...document.querySelectorAll("#sekcije textarea")];
+
+function osvezi() {
+  let uk = 0;
+  const poSek = SEKCIJE.map(() => 0);
+  polja().forEach(t => {
+    const ok = t.value.trim().length > 0;
+    t.closest(".q").classList.toggle("ok", ok);
+    if (ok) { uk++; poSek[t.closest(".q").dataset.sek]++; }
+  });
+  SEKCIJE.forEach((s, i) => {
+    const c = $("cnt-" + i);
+    c.textContent = poSek[i] + " / " + s.pitanja.length;
+    c.classList.toggle("done", poSek[i] === s.pitanja.length);
+  });
+  $("bar-lbl").textContent = uk + " / " + UKUPNO;
+  $("fill").style.transform = "scaleX(" + (uk / UKUPNO) + ")";
+  $("send-sum").textContent = "Popunjeno " + uk + " od " + UKUPNO + " pitanja.";
+  return uk;
+}
+
+// nacrt u pregledaču
+function sacuvaj() {
+  try {
+    const d = { ime: $("ime").value, smena: $("smena").value };
+    polja().forEach(t => d[t.id] = t.value);
+    localStorage.setItem(KLJUC, JSON.stringify(d));
+  } catch (e) {}
+}
+try {
+  const d = JSON.parse(localStorage.getItem(KLJUC) || "null");
+  if (d) {
+    $("ime").value = d.ime || ""; $("smena").value = d.smena || "";
+    polja().forEach(t => { if (d[t.id]) t.value = d[t.id]; });
+  }
+} catch (e) {}
+osvezi();
+
+let tajmer;
+$("forma").addEventListener("input", () => {
+  osvezi();
+  clearTimeout(tajmer); tajmer = setTimeout(sacuvaj, 400);
+});
+
+$("forma").addEventListener("submit", async e => {
+  e.preventDefault();
+  const msg = $("msg"); msg.className = "msg"; msg.textContent = "";
+  if (!osvezi()) {
+    msg.className = "msg err";
+    msg.textContent = "Popuni bar jedno pitanje pre slanja.";
+    return;
+  }
+  const odgovori = [];
+  let br = 0;
+  SEKCIJE.forEach(s => s.pitanja.forEach(p => {
+    br++;
+    odgovori.push({ sekcija: s.naslov, pitanje: p, odgovor: $("q" + br).value.trim() });
+  }));
+  const telo = {
+    ime: $("ime").value.trim(),
+    smena: $("smena").value.trim(),
+    website: $("website").value,
+    test: new URLSearchParams(location.search).has("test"),
+    odgovori
+  };
+  const dugme = $("posalji");
+  dugme.disabled = true; dugme.textContent = "Šaljem...";
+  try {
+    const r = await fetch(WEBHOOK, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(telo) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok || !j.ok) throw new Error(j.greska || ("Server je vratio " + r.status));
+    try { localStorage.removeItem(KLJUC); } catch (e) {}
+    $("main").hidden = true;
+    document.querySelector(".bar").hidden = true;
+    $("hvala").hidden = false;
+    window.scrollTo(0, 0);
+  } catch (err) {
+    msg.className = "msg err";
+    msg.textContent = "Slanje nije uspelo (" + err.message + "). Tvoji odgovori su sačuvani u ovom pregledaču, probaj ponovo za minut.";
+    dugme.disabled = false; dugme.textContent = "Pošalji odgovore";
+  }
+});
+</script>
+</body>
+</html>
